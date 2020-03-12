@@ -8,7 +8,8 @@
     "license": "MIT",
     "private": true,
     "dependencies": {
-        "@pokt-network/pocket-js": "0.1.0-rc",
+        "icon-sdk-js": "0.0.18",
+        "icon-pocket-provider": "git+https://github.com/pokt-network/icon-pocket-provider.git",
         "js-sha256": "^0.9.0"
     },
     "scripts": {
