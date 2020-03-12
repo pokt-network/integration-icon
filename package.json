@@ -1,0 +1,22 @@
+{
+    "name": "icon-pocket",
+    "version": "0.0.1",
+    "description": "",
+    "main": "index.js",
+    "repository": "",
+    "author": "Alex Firmani",
+    "license": "MIT",
+    "private": true,
+    "dependencies": {
+        "@pokt-network/pocket-js": "0.1.0-rc",
+        "js-sha256": "^0.9.0"
+    },
+    "scripts": {
+        "start": "nodemon ./src/index.js --watch 'src/**/*.js' --exec babel-node -e js",
+        "test": "",
+        "refresh": "rm -rf ./node_modules ./package-lock.json && npm install"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.2"
+    }
+}
