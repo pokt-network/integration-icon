@@ -8,17 +8,18 @@
 const PocketProvider = require('icon-pocket-provider')
 const IconService = require('icon-sdk-js')
 
+const { Configuration, PocketAAT, HttpRpcProvider } = PocketProvider
 const { IconWallet, IconBuilder, IconAmount, IconConverter, SignedTransaction } = IconService
 
 /**
  * Supported networks: Icon Testnet (Zicon), Icon Mainnet
  * 
- * https://docs.pokt.network/docs/supported-networks
- * https://www.icondev.io/docs/testnet
+ * iconChainID: https://docs.pokt.network/docs/supported-networks
+ * iconNetworkID: https://www.icondev.io/docs/testnet
  */
 const iconChainID = "d9d77bce50d80e70026bd240fb0759f08aab7aee63d0a6d98c545f2b5ae0a0b8"
-const iconAPIPath = "/api/v3"
 const iconNetworkID = 80
+const iconAPIPath = "/api/v3"
 
 // Addresses on the Zicon testnet used for example transactions
 const iconWalletAddress1 = 'hx902ecb51c109183ace539f247b4ea1347fbf23b5'
@@ -33,8 +34,7 @@ const pocketPassphrase = 'yo'
 
 // Setup the Pocket Network
 const pocketNode = new URL('http://0.0.0.0:8081')
-const { Configuration, PocketAAT, HttpRpcProvider } = PocketProvider
-const pocketInstance = new PocketProvider.Pocket([pocketNode], new HttpRpcProvider(pocketNode), new Configuration(5, 100000, 10000000))
+const pocketInstance = new PocketProvider.Pocket([pocketNode], new HttpRpcProvider(pocketNode), new Configuration(5, 1000000))
 
 /**
  * Boilerplate class based on ICON-SDK-JS quickstart examples.
@@ -100,14 +100,15 @@ class IcxTransactionExample {
     }
 }
 
-// Create an AAT and use it for the example Icon transactions
-const pocketAAT = PocketAAT.from('0.0.1', pocketPublicKey, pocketPublicKey, pocketPrivateKey)
-const demo = new IcxTransactionExample(iconChainID, iconAPIPath, pocketInstance, pocketAAT);
-
 pocketInstance.keybase.importAccount(Buffer.from(pocketPrivateKey, 'hex'), pocketPassphrase).then(() => {
     pocketInstance.keybase.unlockAccount(pocketAddress, pocketPassphrase, 0).then(() => {
         (async () => {
             try {
+                // Create an AAT and use it for the example Icon transactions
+                const pocketAAT = await PocketAAT.from('0.0.1', pocketPublicKey, pocketPublicKey, pocketPrivateKey)
+                console.log(pocketAAT)
+                
+                const demo = new IcxTransactionExample(iconChainID, iconAPIPath, pocketInstance, pocketAAT);
                 const balance = await demo.getWalletBalance(iconWalletAddress1)
                 console.log("Wallet balance:", balance);
                 (async () => {
