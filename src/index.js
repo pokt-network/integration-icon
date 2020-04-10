@@ -8,33 +8,33 @@
 const PocketProvider = require('icon-pocket-provider')
 const IconService = require('icon-sdk-js')
 
+const { Configuration, PocketAAT, HttpRpcProvider } = PocketProvider
 const { IconWallet, IconBuilder, IconAmount, IconConverter, SignedTransaction } = IconService
 
 /**
  * Supported networks: Icon Testnet (Zicon), Icon Mainnet
  * 
- * https://docs.pokt.network/docs/supported-networks
- * https://www.icondev.io/docs/testnet
+ * iconChainID: https://docs.pokt.network/docs/supported-networks
+ * iconNetworkID: https://www.icondev.io/docs/testnet
  */
-const iconChainID = "d9d77bce50d80e70026bd240fb0759f08aab7aee63d0a6d98c545f2b5ae0a0b8"
+const iconChainID = "d9d669583c2d2a88e54c0120be6f8195b2575192f178f925099813ff9095d139"
+const iconNetworkID = 1
 const iconAPIPath = "/api/v3"
-const iconNetworkID = 80
 
 // Addresses on the Zicon testnet used for example transactions
-const iconWalletAddress1 = 'hx902ecb51c109183ace539f247b4ea1347fbf23b5'
+const iconWalletAddress1 = 'hxcd6f04b2a5184715ca89e523b6c823ceef2f9c3d'
 const iconPrivateKey1 = '38f792b95a5202ab431bfc799f7e1e5c74ec0b9ede5c6142ee7364f2c84d72f6'
 const iconWalletAddress2 = 'hxd008c05cbc0e689f04a5bb729a66b42377a9a497'
 
 // Address on the Pocket blockchain to use for Application Authentication Tokens
-const pocketPrivateKey = '22c6cf663e9932bb691b1432c9d8dae906d2609ff85e08792fceb10b2a0e9feffa457de4393c386ae3c4dde8703bf25080cc9909d98b55fbc7d6f2ca057450a2'
-const pocketPublicKey = 'fa457de4393c386ae3c4dde8703bf25080cc9909d98b55fbc7d6f2ca057450a2'
-const pocketAddress = '2d089de210afd5176b46b38b7c5f4b1ce63622bf'
+const pocketPrivateKey = '25a42ad8ef4b551c7eab68590de53419d9059e4ccdc471f71d1f37a604542ef16e2cda5a6b6709f562dfbc7628099878fabb12d4943261be3cbb76da0bced999'
+const pocketPublicKey = '6e2cda5a6b6709f562dfbc7628099878fabb12d4943261be3cbb76da0bced999'
+const pocketAddress = '96de69d684a1d3ed6cccd5f70d99d77e28bda55b'
 const pocketPassphrase = 'yo'
 
 // Setup the Pocket Network
-const pocketNode = new URL('http://0.0.0.0:8081')
-const { Configuration, PocketAAT, HttpRpcProvider } = PocketProvider
-const pocketInstance = new PocketProvider.Pocket([pocketNode], new HttpRpcProvider(pocketNode), new Configuration(5, 100000, 10000000))
+const pocketNode = new URL('http://node1.testnet.pokt.network:8081')
+const pocketInstance = new PocketProvider.Pocket([pocketNode], new HttpRpcProvider(pocketNode), new Configuration(5, 1000000))
 
 /**
  * Boilerplate class based on ICON-SDK-JS quickstart examples.
@@ -100,14 +100,15 @@ class IcxTransactionExample {
     }
 }
 
-// Create an AAT and use it for the example Icon transactions
-const pocketAAT = PocketAAT.from('0.0.1', pocketPublicKey, pocketPublicKey, pocketPrivateKey)
-const demo = new IcxTransactionExample(iconChainID, iconAPIPath, pocketInstance, pocketAAT);
-
 pocketInstance.keybase.importAccount(Buffer.from(pocketPrivateKey, 'hex'), pocketPassphrase).then(() => {
     pocketInstance.keybase.unlockAccount(pocketAddress, pocketPassphrase, 0).then(() => {
         (async () => {
             try {
+                // Create an AAT and use it for the example Icon transactions
+                const pocketAAT = await PocketAAT.from('0.0.1', pocketPublicKey, pocketPublicKey, pocketPrivateKey)
+                console.log(pocketAAT)
+                
+                const demo = new IcxTransactionExample(iconChainID, iconAPIPath, pocketInstance, pocketAAT);
                 const balance = await demo.getWalletBalance(iconWalletAddress1)
                 console.log("Wallet balance:", balance);
                 (async () => {
