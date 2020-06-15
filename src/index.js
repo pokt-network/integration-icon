@@ -19,7 +19,6 @@ const { IconWallet, IconBuilder, IconAmount, IconConverter, SignedTransaction } 
  */
 const iconChainID = "d9d669583c2d2a88e54c0120be6f8195b2575192f178f925099813ff9095d139"
 const iconNetworkID = 1
-const iconAPIPath = "/api/v3"
 
 // Addresses on the Zicon testnet used for example transactions
 const iconWalletAddress1 = 'hxcd6f04b2a5184715ca89e523b6c823ceef2f9c3d'
@@ -50,8 +49,8 @@ class IcxTransactionExample {
      * 
      * @param {pocketAAT} pocketAAT - Application Authentication Token
      */
-	constructor(iconChainID, iconAPIPath, pocketInstance, pocketAAT) {
-        this.provider = new PocketProvider.PocketProvider(iconChainID, iconAPIPath, pocketInstance, pocketAAT)
+	constructor(iconChainID, pocketInstance, pocketAAT) {
+        this.provider = new PocketProvider(iconChainID, pocketInstance, pocketAAT)
         this.iconService = new IconService(this.provider)
         this.wallet = new IconWallet(Buffer.from(iconPrivateKey1, 'hex'))
         this.txHash = ''
@@ -108,7 +107,7 @@ pocketInstance.keybase.importAccount(Buffer.from(pocketPrivateKey, 'hex'), pocke
                 const pocketAAT = await PocketAAT.from('0.0.1', pocketPublicKey, pocketPublicKey, pocketPrivateKey)
                 console.log(pocketAAT)
                 
-                const demo = new IcxTransactionExample(iconChainID, iconAPIPath, pocketInstance, pocketAAT);
+                const demo = new IcxTransactionExample(iconChainID, pocketInstance, pocketAAT);
                 const balance = await demo.getWalletBalance(iconWalletAddress1)
                 console.log("Wallet balance:", balance);
                 (async () => {
